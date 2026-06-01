@@ -17,4 +17,19 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         )
         Profile.objects.create(user=user)
         return user 
+
+class ProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source= 'user.username', read_only=True)
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
+
+    class Meta: 
+        model = Profile
+        fields = ['id', 'username', 'bio', 'profile_picture', 'followers_count', 'following_count']
+
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+    
+    def get_following_count(self, obj):
+        return obj.following.count()
     
