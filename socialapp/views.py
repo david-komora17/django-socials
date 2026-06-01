@@ -42,3 +42,29 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
         if self.request.method in permissions.SAFE_METHODS:
             return [permissions.AllowAny()]
         return [permissions.IsAuthenticated()]
+    
+# POSTS
+class PostListCreateView(generics.ListCreateAPIView):
+    queryset = Post.objects.all().order_by('-created_at')  
+    serializer_class = PostSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    lookup_url_kwarg = 'post_id'
+    permission_classes = [permissions.isAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+
+# News_feed
+class NewsFeedView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user_profile = self.request.user.profile
+        # Extract user instances from profiles followed by active user
+        followed_profiles = user_profile.following.all()
+        followed_users = [prof.user for prof in followed_profiles]
+        return Post.objects.filter(author__in=followed_users).order_by('-created_at')
