@@ -84,4 +84,39 @@ class commentDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
     lookup_url_kwarg = 'comment_id'
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
-    
+
+    class PostLikeView(views.APIView):
+        permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, post_id):
+        post_obj = get_object_or_404(Post, id=post_id)
+        like, created = PostLike.objects.get_or_create(user=request.user, post=post_obj)
+        if not created:
+            return Response({'detail': 'Already liked.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Post liked.'}, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, post_id):
+        post_obj = get_object_or_404(Post, id=post_id)
+        like = PostLike.objects.filter(user=request.user, post=post_obj)
+        if like.exists():
+            like.delete()
+            return Response({'detail': 'Like removed.'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Not liked yet.'}, status=status.HTTP_400_BAD_REQUEST)
+
+class CommentLikeView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, comment_id):
+        comment_obj = get_object_or_404(Comment, id=comment_id)
+        like, created = CommentLike.objects.get_or_create(user=request.user, comment=comment_obj)
+        if not created:
+            return Response({'detail': 'Already liked.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Comment liked.'}, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, comment_id):
+        comment_obj = get_object_or_404(Comment, id=comment_id)
+        like = CommentLike.objects.filter(user=request.user, comment=comment_obj)
+        if like.exists():
+            like.delete()
+            return Response({'detail': 'Like removed.'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Not liked yet.'}, status=status.HTTP_400_BAD_REQUEST)
