@@ -48,3 +48,17 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_comments_count(self, obj):
         return obj.comments.count()
+    
+# socialapp/serializers.py
+
+class CommentSerializer(serializers.ModelSerializer):
+    author_username = serializers.CharField(source='author.username', read_only=True)
+    likes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'post', 'author', 'author_username', 'text', 'created_at', 'likes_count']
+        read_only_fields = ['author', 'post']
+
+    def get_likes_count(self, obj):
+        return obj.likes.count()

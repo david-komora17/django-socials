@@ -85,10 +85,16 @@ WSGI_APPLICATION = 'socialmedia.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# socialmedia/settings.py
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django-socials',             # The database name you created in pgAdmin
+        'USER': 'postgres',              # Your PostgreSQL username
+        'PASSWORD': 'Dkomora17',     # Your actual PostgreSQL password
+        'HOST': 'localhost',             # Runs locally on your machine
+        'PORT': '5432',                  # Default PostgreSQL port
     }
 }
 

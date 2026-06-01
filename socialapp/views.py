@@ -55,7 +55,7 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_url_kwarg = 'post_id'
-    permission_classes = [permissions.isAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
 
 # News_feed
 class NewsFeedView(generics.ListAPIView):
@@ -79,7 +79,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
         post_obj = get_object_or_404(Post, id=self.kwargs['post_id'])
         serializer.save(author=self.request.user, post=post_obj)
 
-class commentDetailView(generics.RetrieveUpdateDestroyAPIView):
+class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     lookup_url_kwarg = 'comment_id'
