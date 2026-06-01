@@ -68,3 +68,20 @@ class NewsFeedView(generics.ListAPIView):
         followed_profiles = user_profile.following.all()
         followed_users = [prof.user for prof in followed_profiles]
         return Post.objects.filter(author__in=followed_users).order_by('-created_at')
+    
+class CommentListCreateView(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        return  Comment.objects.filter(post_id=self.kwargs['post_id'])
+    
+    def perform_create(self, serializer):
+        post_obj = get_object_or_404(Post, id=self.kwargs['post_id'])
+        serializer.save(author=self.request.user, post=post_obj)
+
+class commentDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    lookup_url_kwarg = 'comment_id'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    
