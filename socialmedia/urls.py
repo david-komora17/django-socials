@@ -39,5 +39,7 @@ urlpatterns = [
     path('posts/<int:post_id>/comments/', CommentListCreateView.as_view(), name='comment-list'),
     path('comments/<int:comment_id>/', CommentDetailView.as_view(), name='comment-detail'),
 
-    
+    # Likes System
+    path('posts/<int:post_id>/like/', PostLikeView.as_view(), name='post-like'),
+    path('comments/<int:comment_id>/like/', CommentLikeView.as_view(), name='comment-like'),
 ]
