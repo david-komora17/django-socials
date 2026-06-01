@@ -34,4 +34,10 @@ urlpatterns = [
     path('posts/', PostListCreateView.as_view(), name='post-list'),
     path('posts/feed/', NewsFeedView.as_view(), name='news-feed'),
     path('posts/<int:post_id>/', PostDetailView.as_view(), name='post-detail'),
+
+    # Comments
+    path('posts/<int:post_id>/comments/', CommentListCreateView.as_view(), name='comment-list'),
+    path('comments/<int:comment_id>/', CommentDetailView.as_view(), name='comment-detail'),
+
+    
 ]
