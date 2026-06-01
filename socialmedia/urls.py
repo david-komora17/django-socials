@@ -29,4 +29,9 @@ urlpatterns = [
 
     # Profiles
     path('profiles/<int:user_id>/', ProfileDetailView.as_view(), name='profile-detail'),
+
+    # Posts & News Feed
+    path('posts/', PostListCreateView.as_view(), name='post-list'),
+    path('posts/feed/', NewsFeedView.as_view(), name='news-feed'),
+    path('posts/<int:post_id>/', PostDetailView.as_view(), name='post-detail'),
 ]
