@@ -120,3 +120,31 @@ class CommentLikeView(views.APIView):
             like.delete()
             return Response({'detail': 'Like removed.'}, status=status.HTTP_204_NO_CONTENT)
         return Response({'detail': 'Not liked yet.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class FollowUserView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, user_id):
+        target_user = get_object_or_404(User, id=user_id)
+        if target_user == request.user:
+            return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Add current user's profile to target user's followers
+        target_user.profile.followers.add(request.user.profile)
+        return Response({'detail': f'Successfully followed {target_user.username}.'}, status=status.HTTP_200_OK)
+
+    def delete(self, request, user_id):
+        target_user = get_object_or_404(User, id=user_id)
+        target_user.profile.followers.remove(request.user.profile)
+        return Response({'detail': f'Successfully unfollowed {target_user.username}.'}, status=status.HTTP_204_NO_CONTENT)
+
+# --- DISCOVERY & SEARCH ---
+class UserSearchView(generics.ListAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        query = self.request.query_params.get('query', '')
+        if query:
+            return Profile.objects.filter(user__username__icontains=query)
+        return Profile.objects.all()
